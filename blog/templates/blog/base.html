@@ -1,0 +1,118 @@
+{% load staticfiles %}
+<html>
+  <head>
+        <title>blog</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="../../static/css/social-likes_classic.css" rel="stylesheet">
+        <link href="../../static/css/awesomplete.css" rel="stylesheet">
+        <link href="../../static/css/completer.css" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+      <link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+     <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
+   </head>
+<body>
+  <div class="page-header">
+     {% if user.is_authenticated %}
+     <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-send"></span></a>
+     <a href="{% url 'post_draft_list' %}" class="top-menu"><span class="glyphicon glyphicon-open"></span></a>
+     <p class="top-menu">Hello <a href="/blog/profile/" class="profile-class">{{ user.username }}</a><small><a href="{% url 'django.contrib.auth.views.logout' %}">(Log out)</a></small></p>
+     {% else %}
+     <a href="{% url 'django.contrib.auth.views.login' %}" class="top-menu"><span class=" glyphicon glyphicon-qrcode"></span></a>
+     <a href="{% url 'register' %}"class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+     {% endif %}
+      <h1><a href="{% url 'blog.views.post_list' %}">Blog</a></h1>
+   </div>
+    <div class="content">
+       <div class="row two">
+         
+             <div class="col-sm-4">{% if user.is_authenticated %}See your <a href="/blog/profile/" class="options">profile</a>{% else %}
+             Haven't logged in yet?! <a href="{% url 'django.contrib.auth.views.login' %}" class="options" >Do it now!<br> </a> Or  <a href="{% url 'register' %}" class="options"> register</a>
+           {% endif %}
+            </div>
+             <div class="col-sm-4">See other <a href="/bloggers/" class="options">bloggers</a></div>
+             <div class="col-sm-4">See different <a href="/categories/" class="options">categories</a></div>       
+        </div>
+        <div class="row">
+            <div class="col-md-8 ">
+              {% block content %}
+              {% endblock %}                  
+            </div>
+           
+            <div class="col-md-4 ">
+                  <div class="cloud-tag">
+                  <h3 class="cloud-h3">Облако тегов</h3>                
+                 {% for tag in tags%}               
+                 <a class= "cloud-link" href="{% url 'tag' name=tag.name %}">  {{tag}} </a>
+                  
+                  {% if not forloop.last %}, {% endif%}
+                  {% endfor%} 
+                     
+                  </div>
+            </div>
+        
+    </div>
+   </div>
+   
+   
+   <script src="../../static/js/jquery.js" ></script>
+   <script src="../../static/js/social-likes.min.js" ></script>
+   <script src="../../static/js/awesomplete.js" ></script>
+   <script src="../../static/js/awesomplete.js" ></script>
+      <script src="./../static/js/script.js" ></script>
+    <script>
+     
+       $("#myinput").click(function(){
+       $.getJSON("/tag_json/", function(result){
+        
+   new Awesomplete(document.querySelector("#myinput"), {
+	      list: result });     
+        });
+       });
+       
+$('#likes').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.get('/like_category/', {post_pk: catid}, function(data){
+               $('#like_count').html(data);
+               $('#likes').hide();
+               $('#dislikes').hide();
+               $('#downl').show()
+    });
+});
+
+$('#dislikes').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.get('/dislike_category/', {post_pk: catid}, function(data){
+               $('#dislike_count').html(data);
+               $('#dislikes').hide();
+               $('#likes').hide();
+               $('#down').show()
+    });
+});
+       $('#down').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.get('/down/', {post_pk: catid}, function(data){
+               $('#dislike_count').html(data);
+               $('#down').hide();
+               $('#dislikes').show();
+               $('#likes').show();
+    });
+});
+       $('#downl').click(function(){
+    var catid;
+    catid = $(this).attr("data-catid");
+    $.get('/downl/', {post_pk: catid}, function(data){
+               $('#like_count').html(data);
+               $('#downl').hide();
+               $('#dislikes').show();
+               $('#likes').show();
+    });
+});
+
+      </script>  
+   </body>
+</html>
+

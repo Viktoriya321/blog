@@ -1,0 +1,26 @@
+ {% extends 'blog/base.html' %}
+
+    {% block content %}
+
+  <table class="table table-hover table-condensed table-for-user-list">
+     <caption><p class="tag-p"> Posts include {{tag}} tag: </p></caption>
+      <thead>
+           <tr>
+              <th class="tag-th" >Published date</th>
+              <th class="tag-th" >Title</th>
+           </tr>
+      </thead>
+{% for post in posts %}        
+  <tbody>
+     <tr>
+       <td class="tag-th" >{% if not post.published_date %} 
+         Post is not published yet 
+         {%else %} 
+         {{post.published_date }} 
+         {% endif %}</td>
+      <td class="tag-th" ><a class="cloud-link" href="{% url 'post_detail' pk=post.pk %}"> {{post.title}} </a></td>
+     </tr>
+   </tbody>
+{% endfor %}
+</table>
+{% endblock  %}
